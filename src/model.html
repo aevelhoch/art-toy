@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>block test</title>
+	<link rel="stylesheet" type="text/css" href="index.css">
+</head>
+<body>
+	<div>hello.</div>
+	<div id="center" style="background: yellow">
+		<div id="left" style="background: blue">
+			<div id="bigbox">
+				<div class="littleBox" id="box0">0</div>
+				<div class="littleBox" id="box1">1</div>
+				<div class="littleBox" id="box2">2</div>
+				<div class="littleBox" id="box3">3</div>
+				<div class="littleBox" id="box4">4</div>
+				<div class="littleBox" id="box5">5</div>
+			</div>
+		</div>
+		<div id="right" style="background: #EEEEEE">
+			split dir
+			<div id="sidebutton" class="activebutton">H  <span class="selectedoption">V</span></div>
+			<br>
+			color block
+			<div id="sidebutton" class="inactivebutton">color</div>
+			<br>
+			<input type="color" id="colorpicker" value="#000000">
+			<br>
+			palette
+				<div id="paletteholder">
+					<div class="palettetile"></div>
+					<div class="palettetile"></div>
+					<div class="palettetile"></div>
+					<div class="palettetile"></div>
+					<div class="palettetile"><span id="paletteplus">+</span></div>
+				</div>
+			<br>
+			lines
+			<div id="sidebutton" class="activebutton"><span class="selectedoption">O</span> X</div>
+			<br>
+			undo
+			<div id="sidebutton" class="activebutton">undo</div>
+			<br>
+		</div>
+	</div>
+</body>
+</html>
