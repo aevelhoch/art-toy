@@ -20,9 +20,18 @@ function Block(props) {
 		background: props.stats.color,
 	};
 	
+	// if color is dark enough, set lines around box to dark grey so they stand out
+	let colorR = 30;
+	let colorG = 30;
+	let colorB = 30;
+	if (props.stats.color !== undefined){
+		colorR = parseInt(props.stats.color.slice(1,3),16);
+		colorG = parseInt(props.stats.color.slice(3,5),16);
+		colorB = parseInt(props.stats.color.slice(5,7),16);
+	}
 	let cName = "littleBox";
 	if(props.stats.lines === false) cName += "Off";
-	
+	else if(colorR < 30 && colorG < 30 && colorB < 30) cName += "Dark";
 	return (
 		<div className={cName} onClick={props.onClick} style={boxStyle}
 			>
@@ -57,11 +66,42 @@ class Board extends React.Component {
   }
 }
 
-/*
 class Palette extends React.Component {
-	return();
+	// helper function to render individual blocks for palette
+	renderColorBlock(i) {
+		// block gets color of ith entry in palette
+		let blockStyle = {
+			background: this.props.palette[i],
+		};
+		return (
+		// onClick is the function to set current color to ith entry in palette
+			<div 
+				className="palettetile" 
+				onClick={()=>this.props.onClick(i)} 
+				key={i} 
+				style={blockStyle}>
+			</div>
+		);
+	}
+	
+	render() {	
+		// add each color in palette to array of blocks to render
+		let renderMe = [];
+		for(let i = 0; i < this.props.palette.length; i++){
+			renderMe.push(this.renderColorBlock(i));
+		}
+		// then add final '+' block with addToPalette function to array of blocks to render
+		renderMe.push(<div className="palettetile" onClick={()=>this.props.addToPalette()} key={renderMe.length}><span id="paletteplus">+</span></div>)
+	
+		return(
+			<div id="paletteholder">
+				{renderMe}
+			</div>
+		)
+	};
 }
-*/
+
+
 
 class App extends React.Component {
 	constructor(props) {
@@ -76,13 +116,20 @@ class App extends React.Component {
 		this.state = {
 		blocks: [firstBlock],
 		undoBlocks: [],
+		palette: [],
 		splitDir: "H",
 		toolSelected: "split",
-		lines: true
+		lines: true,
 		};
 	}
 	
 	splitBlockHoriz(i){
+		// if the lines are off, instead just turn them on
+		if (!this.state.lines){
+			this.swapLineDisplay();
+			return;
+		}
+		
 		// add current state to undoQueue
 		let undoQueue = JSON.parse(JSON.stringify(this.state.undoBlocks));
 		let tempBlock = JSON.parse(JSON.stringify(this.state.blocks));
@@ -115,6 +162,11 @@ class App extends React.Component {
 	}
 	
 	splitBlockVert(i){
+		if (!this.state.lines){
+			this.swapLineDisplay();
+			return;
+		}
+		
 		// add current state to undoQueue
 		let undoQueue = JSON.parse(JSON.stringify(this.state.undoBlocks));
 		let tempBlock = JSON.parse(JSON.stringify(this.state.blocks));
@@ -170,7 +222,18 @@ class App extends React.Component {
 		this.setState({undoBlocks: undoQueue});
 	}
 	
-	handleClick(i) {
+	clear() {
+		let clearBlock = Object.create(block);
+		clearBlock.top = 0;
+		clearBlock.left = 0;
+		clearBlock.bottom = 100;
+		clearBlock.right = 100;
+		this.setState({blocks: [clearBlock]});
+		this.setState({undoBlocks: []});
+	}
+	
+	handleBlockClick(i) {
+		// call function for selected tool on the block by key
 		if (this.state.toolSelected === "split"){
 			if (this.state.splitDir === "H"){
 				this.splitBlockHoriz(i);
@@ -185,6 +248,7 @@ class App extends React.Component {
 	}
 	
 	swapSplitDir(){
+		// swap H/V in state
 		if (this.state.splitDir === "H"){
 			this.setState({splitDir: "V"});
 		}
@@ -194,34 +258,27 @@ class App extends React.Component {
 	}
 	
 	swapLineDisplay(){
-		if (this.state.lines){
-			this.setState({lines: false});
-			let tempBlocks = this.state.blocks;
-			for(let i = 0; i < this.state.blocks.length; i++){
-				tempBlocks[i].lines = false;
-			}
-			this.setState({blocks: tempBlocks});
+		// set the lines state to the opposite of the current break
+		this.setState({lines: !this.state.lines});
+		// then replace current state with identical state with lines on opposite display setting
+		let tempBlocks = this.state.blocks;
+		for(let i = 0; i < this.state.blocks.length; i++){
+			tempBlocks[i].lines = !this.state.lines;
 		}
-		else {
-			this.setState({lines: true})
-			let tempBlocks = this.state.blocks;
-			for(let i = 0; i < this.state.blocks.length; i++){
-				tempBlocks[i].lines = true;
-			}
-			this.setState({blocks: tempBlocks});
-		}
+		this.setState({blocks: tempBlocks});
 	}
 
 	setTool(tool){
+		// helper function to set tool easier
 		this.setState({toolSelected: tool});
 	}
 	
 	renderLineButton(){
 		if (this.state.lines){
-			return(<div id="sidebutton" className="activebutton" onClick={()=>this.swapLineDisplay()}><span className="selectedoption">O</span>  X</div>)
+			return(<div id="sidebutton" className="activebutton selectedoption" onClick={()=>this.swapLineDisplay()}>on</div>)
 		}
 		else {
-			return(<div id="sidebutton" className="activebutton" onClick={()=>this.swapLineDisplay()}>O  <span className="selectedoption">X</span></div>)
+			return(<div id="sidebutton" className="inactivebutton" onClick={()=>this.swapLineDisplay()}>off</div>)
 		}
 	}
 	
@@ -241,7 +298,7 @@ class App extends React.Component {
 
 	renderColorButton(){
 		if (this.state.toolSelected === "color"){
-			return(<div id="sidebutton" className="activebutton"><span className="selectedoption">color</span></div>)
+			return(<div id="sidebutton" className="activebutton selectedoption">color</div>)
 		} else {
 			return(<div id="sidebutton" className="inactivebutton" onClick={()=>this.setTool("color")}>color</div>)
 		}
@@ -255,6 +312,38 @@ class App extends React.Component {
 		}
 	}
 
+	renderClearButton(){
+		// 2-step confirm to clear canvas
+		if (this.state.blocks.length > 1){
+			return(<div id="sidebutton" class="activebutton" onClick={()=>this.clear()}><span className="selectedoption">clear</span></div>)
+		} else {
+			return(<div id="sidebutton" class="inactivebutton">clear</div>)
+		}
+	}
+
+	colorChange(){
+		if (this.state.toolSelected !== "color"){
+			this.setTool("color")
+		}
+	}
+
+	addToPalette(){
+		// create a copy of palette to work with
+		let tempPalette = [];
+		Object.assign(tempPalette, this.state.palette)
+		// if the current selected color is in the palette, don't add it
+		for (let i = 0; i < tempPalette.length; i++){
+			if (tempPalette[i] === document.getElementById("colorpicker").value) return;
+		}
+		// if the current selected color is new, add it to palette
+		tempPalette.push(document.getElementById("colorpicker").value);
+		this.setState({palette: tempPalette});
+	}
+	
+	handleColorClick(i){
+		document.getElementById("colorpicker").value = this.state.palette[i];
+	}
+
 	render() {		
 		return (
 			<div>
@@ -262,7 +351,7 @@ class App extends React.Component {
 					<div id="left">
 					<Board 
 						blocks={this.state.blocks}
-						onClick={(i)=>this.handleClick(i)}
+						onClick={(i)=>this.handleBlockClick(i)}
 					/>
 					</div>
 					<div id="right">
@@ -272,14 +361,23 @@ class App extends React.Component {
 						color
 						{this.renderColorButton()}
 						<br/>
-						<input type="color" id="colorpicker" defaultValue="#000000"/>
+						<input type="color" id="colorpicker" defaultValue="#000000" onChange={()=>this.colorChange()}/>
 						<br/>
+						palette
+						<Palette
+							palette={this.state.palette}
+							onClick={(i)=>this.handleColorClick(i)}
+							addToPalette={()=>this.addToPalette()} // pass this function on down to '+' palette Block
+						/>
 						<br/>
 						lines
 						{this.renderLineButton()}
 						<br/>
 						undo
 						{this.renderUndoButton()}
+						<br/>
+						clear
+						{this.renderClearButton()}
 						<br/>
 					</div>
 				</div>

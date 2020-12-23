@@ -38,6 +38,13 @@ body {
 	position: absolute;
 }
 
+.littleBoxDark {
+	box-shadow:0px 0px 0px 1px #292929 inset;
+	background-color: white;
+	font-size: 25pt;
+	position: absolute;
+}
+
 .littleBoxOff {
 	box-shadow:0px 0px 0px 0px black inset;
 	background-color: white;
@@ -72,10 +79,15 @@ body {
 	font-size: 7vh;
 	font-weight: 900;
 	text-align: center;
+	user-select: none;
+	-webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none;
 }
 
 #paletteholder{
-	background: #FFFFBB; 
+	/* background: #FFFFBB; */
 	display: flex; 
 	flex-wrap: wrap; 
 	width: 24vh;
