@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>block test</title>
+	<title>block test (save popup)</title>
 	<link rel="stylesheet" type="text/css" href="index.css">
 </head>
 <body>
@@ -46,6 +46,22 @@
 			save/load
 			<div id="sidebutton" class="activebutton selectedoption">menu</div>
 			<br>
+		</div>
+	</div>
+	<div id="bgcover">
+	</div>
+	<div class="popup" id="popupsave">
+		<strong>Save/Load</strong>
+		To save your image, copy the text in the box and save it somewhere. To load an image, paste the text for a saved image in the text box and press OK.
+		<em>(Saving or loading an image does not preserve the undo history.)</em>
+		<br>
+		<div style="text-align:center">
+			<input type="text" id="saveloadfield">
+			<!-- need to add some sort of js event to select entire input on click -->
+		</div>
+		<br>
+		<div id="popupbuttonholder">
+			<div class="popupbutton">OK</div>
 		</div>
 	</div>
 </body>

@@ -347,7 +347,7 @@ class App extends React.Component {
 	render() {		
 		return (
 			<div>
-				<div id="center">
+				<div id="main">
 					<div id="left">
 					<Board 
 						blocks={this.state.blocks}
