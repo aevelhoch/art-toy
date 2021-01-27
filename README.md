@@ -5,10 +5,10 @@ My first react project, an attempt at an art creation toy with purposely limited
 - All basic art tools
 - Ease of use features
 - Undo/Redo
+- Save/Load (copyable text string)
 
 ## To-Do
 
-- Save/Load (to file or copyable text string)
 - Zoom/Render size
 - Hold click to color on mouseover
 - Fun stats

@@ -52,12 +52,16 @@
 	</div>
 	<div class="popup" id="popupsave">
 		<strong>Save/Load</strong>
-		To save your image, copy the text in the box and save it somewhere. To load an image, paste the text for a saved image in the text box and press OK.
-		<em>(Saving or loading an image does not preserve the undo history.)</em>
-		<br>
+		To save your image, copy the text in this text box and save it somewhere.
+		<em class="smalltext">(Saving or loading an image does not preserve the undo history.)</em>
 		<div style="text-align:center">
-			<input type="text" id="saveloadfield">
-			<!-- need to add some sort of js event to select entire input on click -->
+			<input type="text" class="saveloadtextbox" id="savefield">
+		</div>
+		<br>
+		To load an image, paste the text for a saved image in this text box and press OK.
+		<em class="smalltext">(Press OK with an empty text box to cancel loading)</em>
+		<div style="text-align:center">
+			<input type="text" class="saveloadtextbox" id="loadfield">
 		</div>
 		<br>
 		<div id="popupbuttonholder">

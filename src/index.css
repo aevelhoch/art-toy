@@ -132,6 +132,10 @@ body {
 	justify-content: center;
 }
 
+.smalltext {
+	font-size: 3vh;
+}
+
 #popupclear {
 	top: 20vh;
 	bottom:20vh;
@@ -146,7 +150,7 @@ body {
 	right: 20vw;
 }
 
-#saveloadfield {
+.saveloadtextbox{
 	width: 20vw;
 	font-size: 5vh;
 	font-family: monospace;
@@ -158,10 +162,15 @@ body {
 	justify-content: space-evenly;
 }
 
+.centerme {
+	text-align: center;
+}
+
 .popupbutton {
 	border: 1px solid black; 
 	box-shadow:0px 0px 0px 1px black inset; 
 	color: black;
+	background-color: white;
 	width: 30%; 
 	text-align: center; 
 	font-size: 5vh;

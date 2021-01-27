@@ -101,7 +101,79 @@ class Palette extends React.Component {
 	};
 }
 
-
+class PopUp extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {value:this.props.saveState}
+		this.handleChange = this.handleChange.bind(this)
+		this.handleSubmit = this.handleSubmit.bind(this)
+	}
+	
+	handleChange(event) {
+		this.setState({value: event.target.value})
+	}
+	
+	handleSubmit(event) {
+		event.preventDefault()
+		this.props.loadState(document.getElementById("loadfield").value)
+		this.props.setState("none")
+	}
+	
+	render() {		
+		if (this.props.popupState === "clear"){
+			return(
+			<>
+				<div id="bgcover">
+				</div>
+				<div className="popup" id="popupclear">
+					<strong>Clear?</strong>
+					Are you sure you want to clear the canvas?
+					<em>(You will not be able to undo this.)</em><br/>
+					<div id="popupbuttonholder">
+						<div className="popupbutton" onClick={()=>this.props.clearFunc()}>Yes</div>
+						<div className="popupbutton" onClick={()=>this.props.setState("none")}>No</div>
+					</div>
+				</div>
+			</>
+			)
+		}
+		else if (this.props.popupState === "save/load"){
+			return(
+			<>
+				<div id="bgcover">
+				</div>
+				<div className="popup" id="popupsave">
+					<form onSubmit={this.handleSubmit}>
+						<strong>Save/Load</strong>
+						To save your image, copy the text in this text box and save it somewhere.
+						<br/>
+						<em className="smalltext">(Saving or loading an image does not preserve the undo history.)</em>
+						<br/>
+						<div className="centerme">
+							<input type="text" className="saveloadtextbox" id="savefield" value={this.props.saveState} onChange={this.handleChange}/>
+						</div>
+						<br/>
+						To load an image, paste the text for a saved image in this text box and press OK.
+						<br/>
+						<em className="smalltext">(Press OK with an empty text box to cancel loading)</em>
+						<br/>
+						<div className="centerme">
+							<input type="text" className="saveloadtextbox" id="loadfield"/>
+						</div>
+						<br/>
+						<div id="popupbuttonholder">
+							<button className="popupbutton" type="submit">OK</button>
+						</div>
+					</form>
+				</div>
+			</>
+			)
+		}
+		else {
+			return(null)
+		}
+	}
+}
 
 class App extends React.Component {
 	constructor(props) {
@@ -120,6 +192,7 @@ class App extends React.Component {
 		splitDir: "H",
 		toolSelected: "split",
 		lines: true,
+		popup: "none",
 		};
 	}
 	
@@ -212,6 +285,9 @@ class App extends React.Component {
 		Object.assign(tempBlocks, this.state.blocks);
 		Object.assign(tempBlocks[i], colorBlock);
 		this.setState({blocks: tempBlocks});
+		
+		// if current color is not in palette, add it to palette automatically
+		this.addToPalette(colorBlock.color);
 	}
 	
 	undo(){
@@ -230,6 +306,7 @@ class App extends React.Component {
 		clearBlock.right = 100;
 		this.setState({blocks: [clearBlock]});
 		this.setState({undoBlocks: []});
+		this.setState({popup: "none"});
 	}
 	
 	handleBlockClick(i) {
@@ -313,12 +390,75 @@ class App extends React.Component {
 	}
 
 	renderClearButton(){
-		// 2-step confirm to clear canvas
 		if (this.state.blocks.length > 1){
-			return(<div id="sidebutton" class="activebutton" onClick={()=>this.clear()}><span className="selectedoption">clear</span></div>)
+			return(<div id="sidebutton" className="activebutton" onClick={()=>this.setState({popup: "clear"})}><span className="selectedoption">clear</span></div>)
 		} else {
-			return(<div id="sidebutton" class="inactivebutton">clear</div>)
+			return(<div id="sidebutton" className="inactivebutton">clear</div>)
 		}
+	}
+	
+	renderSaveButton(){
+		return(<div id="sidebutton" className="activebutton" onClick={()=>this.setState({popup: "save/load"})}><span className="selectedoption">menu</span></div>)
+	}
+	
+	renderPopUp(){
+		if (this.state.popup === "none"){
+		}
+		else if (this.state.popup === "clear"){
+			return(
+			<>
+				<div id="bgcover">
+				</div>
+				<div className="popup" id="popupclear">
+					<strong>Clear?</strong>
+					Are you sure you want to clear the canvas?
+					<em>(You will not be able to undo this.)</em><br/>
+					<div id="popupbuttonholder">
+						<div className="popupbutton" onClick={()=>this.clear()}>Yes</div>
+						<div className="popupbutton" onClick={()=>this.setState({popup:"none"})}>No</div>
+					</div>
+				</div>
+			</>
+			)
+		}
+		else if (this.state.popup === "save/load"){
+			var saveState = JSON.stringify(this.state.blocks)
+			return(
+			<>
+				<div id="bgcover">
+				</div>
+				<div className="popup" id="popupsave">
+					<strong>Save/Load</strong>
+					To save your image, copy the text in the box and save it somewhere. To load an image, paste the text for a saved image in the text box and press OK.
+					<em>(Saving or loading an image does not preserve the undo history.)</em>
+					<br/>
+					<div className="center">
+						<input type="text" id="saveloadfield" defaultValue={saveState}/> 
+						{/* need to add some sort of js event to select entire input on click */}
+					</div>
+					<br/>
+					<div id="popupbuttonholder">
+						<div className="popupbutton" onClick={()=>console.log("poo")}>OK</div>
+					</div>
+				</div>
+			</>
+			)
+		}
+	}
+
+	setPopUp(state){
+		this.setState({popup:state})
+	}
+
+	setBlockState(state){
+		let newState
+		try {
+			newState = JSON.parse(state)
+		} catch(error) {
+			return false
+		}
+		this.setState({blocks:newState})
+		return true
 	}
 
 	colorChange(){
@@ -346,6 +486,7 @@ class App extends React.Component {
 
 	render() {		
 		return (
+		<div>
 			<div>
 				<div id="main">
 					<div id="left">
@@ -379,9 +520,20 @@ class App extends React.Component {
 						clear
 						{this.renderClearButton()}
 						<br/>
+						save/load
+						{this.renderSaveButton()}
+						<br/>
 					</div>
 				</div>
 			</div>
+			<PopUp
+				popupState={this.state.popup}
+				clearFunc={()=>this.clear()}
+				setState={(state)=>this.setPopUp(state)}
+				saveState={JSON.stringify(this.state.blocks)}
+				loadState={(state)=>this.setBlockState(state)}
+			/>
+		</div>
 		);
 	}
 }
