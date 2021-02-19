@@ -104,19 +104,18 @@ class Palette extends React.Component {
 class PopUp extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {value:this.props.saveState}
 		this.handleChange = this.handleChange.bind(this)
 		this.handleSubmit = this.handleSubmit.bind(this)
 	}
 	
 	handleChange(event) {
-		this.setState({value: event.target.value})
+		//this.setState({value: event.target.value})
 	}
 	
 	handleSubmit(event) {
 		event.preventDefault()
-		this.props.loadState(document.getElementById("loadfield").value)
-		this.props.setState("none")
+		this.props.stringToBlockState(document.getElementById("loadfield").value)
+		this.props.setPopUpState("none")
 	}
 	
 	render() {		
@@ -150,7 +149,7 @@ class PopUp extends React.Component {
 						<em className="smalltext">(Saving or loading an image does not preserve the undo history.)</em>
 						<br/>
 						<div className="centerme">
-							<input type="text" className="saveloadtextbox" id="savefield" value={this.props.saveState} onChange={this.handleChange}/>
+							<input type="text" className="saveloadtextbox" id="savefield" value={this.props.blockStateToString()} onChange={this.handleChange}/>
 						</div>
 						<br/>
 						To load an image, paste the text for a saved image in this text box and press OK.
@@ -450,15 +449,67 @@ class App extends React.Component {
 		this.setState({popup:state})
 	}
 
-	setBlockState(state){
+/*
+	setBlockState(inState){
 		let newState
 		try {
-			newState = JSON.parse(state)
+			newState = JSON.parse(inState)
 		} catch(error) {
 			return false
 		}
 		this.setState({blocks:newState})
 		return true
+	}*/
+	
+	saveBlockStateToString(){
+		let tempJSON = JSON.parse(JSON.stringify(this.state.blocks))
+		let csvOut = ""
+		for (let i = 0; i < tempJSON.length; i++){
+			csvOut += tempJSON[i]['top'] + ","
+			csvOut += tempJSON[i]['bottom'] + ","
+			csvOut += tempJSON[i]['left'] + ","
+			csvOut += tempJSON[i]['right'] + ","
+			if (tempJSON[i]['color'] === undefined) {
+				csvOut += "#FFFFFF!"
+			}
+			else {
+				csvOut += tempJSON[i]['color'] + "!"
+			}
+		}
+		// csvOut looks like this: top,bottom,left,right,color!<repeat>
+		// for example: 0,50,0,50,#000000!<repeat>
+		return(csvOut)
+	}
+	
+	loadBlockStateFromString(saveString){
+		// takes in string from saveBlockStateToString and returns them in block object form
+		let blocksObject = []
+		try{
+			let boxStringArray = saveString.split('!')
+			for (let i = 0; i < boxStringArray.length - 1; i++){
+				let currBoxString = boxStringArray[i].split(',')
+				let currBlock = {}
+				currBlock.top = parseInt(currBoxString[0])
+				currBlock.bottom = parseInt(currBoxString[1])
+				currBlock.left = parseInt(currBoxString[2])
+				currBlock.right = parseInt(currBoxString[3])
+				currBlock.color = currBoxString[4]
+				blocksObject.push(currBlock)
+			}
+		} catch(error) {
+			return false
+		}
+		// don't set the state unless we created a non-empty list of blocks with proper keys
+		let isGood = true
+		for (let i = 0; i < blocksObject.length; i++){
+			if (!blocksObject[i].hasOwnProperty('top')) isGood = false
+			if (!blocksObject[i].hasOwnProperty('bottom')) isGood = false
+			if (!blocksObject[i].hasOwnProperty('left')) isGood = false
+			if (!blocksObject[i].hasOwnProperty('right')) isGood = false
+			if (!blocksObject[i].hasOwnProperty('color')) isGood = false
+		}
+		if (isGood && blocksObject.length > 0) this.setState({blocks:blocksObject})
+		return isGood
 	}
 
 	colorChange(){
@@ -529,9 +580,9 @@ class App extends React.Component {
 			<PopUp
 				popupState={this.state.popup}
 				clearFunc={()=>this.clear()}
-				setState={(state)=>this.setPopUp(state)}
-				saveState={JSON.stringify(this.state.blocks)}
-				loadState={(state)=>this.setBlockState(state)}
+				setPopUpState={(inState)=>this.setPopUp(inState)}
+				blockStateToString={()=>this.saveBlockStateToString()}
+				stringToBlockState={(inString)=>this.loadBlockStateFromString(inString)}
 			/>
 		</div>
 		);
