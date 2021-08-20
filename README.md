@@ -13,7 +13,6 @@ My first react project, an attempt at an art creation toy with purposely limited
 - Hold click to color on mouseover
 - Fun stats
 - Nicer UI
-- Help/How-to page
 
 ## Possibly In The Future
 

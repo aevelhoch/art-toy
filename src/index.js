@@ -130,7 +130,7 @@ class PopUp extends React.Component {
 					<em>(You will not be able to undo this.)</em><br/>
 					<div id="popupbuttonholder">
 						<div className="popupbutton" onClick={()=>this.props.clearFunc()}>Yes</div>
-						<div className="popupbutton" onClick={()=>this.props.setState("none")}>No</div>
+						<div className="popupbutton" onClick={()=>this.props.setPopUpState("none")}>No</div>
 					</div>
 				</div>
 			</>
@@ -167,6 +167,29 @@ class PopUp extends React.Component {
 				</div>
 			</>
 			)
+		}
+		else if (this.props.popupState === "help"){
+			return(
+			<>
+				<div id="bgcover">
+				</div>
+				<div className="popup" id="popuphelp">
+					<strong>Help</strong>
+					<span id="helptext"><br/>
+					This art app is designed to inspire creativity by limiting the available tools.<br/>
+					<strong>split dir</strong> - When you click on a block, it will be split in the middle into two blocks along this direction.<br/>
+					<strong>color block</strong> - When this is toggled on, clicking on a block will set it to the currently chosen color instead of splitting it.<br/>
+					<strong>lines</strong> - When this is toggled on, dark lines visibly seperate the blocks. The lines disappear when toggled off. Will automatically turn on before trying to split or color blocks.<br/>
+					<strong>undo</strong> - Click this button to undo your last split or color operation. There is no redo function, so be sure you want to undo before pressing this button.<br/>
+					<strong>clear</strong> - This button will ask you if you want to clear the canvas. You cannot undo a clear operation.<br/>
+					<strong>save/load</strong> - This button will open the save/load menu. This app will provide a string of text that encodes your picture for you to save wherever you want.<br/>
+					<br/></span>
+					<div id="popupbuttonholder">
+						<div className="popupbutton" onClick={()=>this.props.setPopUpState("none")}>OK</div>
+					</div>
+				</div>
+			</>
+			)	
 		}
 		else {
 			return(null)
@@ -400,66 +423,18 @@ class App extends React.Component {
 		return(<div id="sidebutton" className="activebutton" onClick={()=>this.setState({popup: "save/load"})}><span className="selectedoption">menu</span></div>)
 	}
 	
-	renderPopUp(){
-		if (this.state.popup === "none"){
-		}
-		else if (this.state.popup === "clear"){
-			return(
-			<>
-				<div id="bgcover">
-				</div>
-				<div className="popup" id="popupclear">
-					<strong>Clear?</strong>
-					Are you sure you want to clear the canvas?
-					<em>(You will not be able to undo this.)</em><br/>
-					<div id="popupbuttonholder">
-						<div className="popupbutton" onClick={()=>this.clear()}>Yes</div>
-						<div className="popupbutton" onClick={()=>this.setState({popup:"none"})}>No</div>
-					</div>
-				</div>
-			</>
-			)
-		}
-		else if (this.state.popup === "save/load"){
-			var saveState = JSON.stringify(this.state.blocks)
-			return(
-			<>
-				<div id="bgcover">
-				</div>
-				<div className="popup" id="popupsave">
-					<strong>Save/Load</strong>
-					To save your image, copy the text in the box and save it somewhere. To load an image, paste the text for a saved image in the text box and press OK.
-					<em>(Saving or loading an image does not preserve the undo history.)</em>
-					<br/>
-					<div className="center">
-						<input type="text" id="saveloadfield" defaultValue={saveState}/> 
-						{/* need to add some sort of js event to select entire input on click */}
-					</div>
-					<br/>
-					<div id="popupbuttonholder">
-						<div className="popupbutton" onClick={()=>console.log("poo")}>OK</div>
-					</div>
-				</div>
-			</>
-			)
-		}
+	renderTopMenu(){
+		return(
+			<div id="cornerbox">
+				<div id="smallbutton" className="activebutton" onClick={()=>this.setState({popup: "help"})}><span id="shiftup" role="img" aria-label="question mark">&#10068;</span></div>
+				<div id="smallbutton" className="activebutton"><span id="shiftup" role="img" aria-label="chart">&#128202;</span></div>
+			</div>
+		)
 	}
 
 	setPopUp(state){
 		this.setState({popup:state})
 	}
-
-/*
-	setBlockState(inState){
-		let newState
-		try {
-			newState = JSON.parse(inState)
-		} catch(error) {
-			return false
-		}
-		this.setState({blocks:newState})
-		return true
-	}*/
 	
 	saveBlockStateToString(){
 		let tempJSON = JSON.parse(JSON.stringify(this.state.blocks))
@@ -577,6 +552,7 @@ class App extends React.Component {
 					</div>
 				</div>
 			</div>
+			{this.renderTopMenu()}
 			<PopUp
 				popupState={this.state.popup}
 				clearFunc={()=>this.clear()}

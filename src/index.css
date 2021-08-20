@@ -72,9 +72,9 @@ body {
 .palettetile{
 	border: 2px solid black; 
 	border-radius: 7px; 
-	width: 5vh; 
-	height: 5vh; 
-	margin: .5vh;
+	width: 4vh; 
+	height: 4vh; 
+	margin: .25vh;
 	color: #FF0000;
 	font-size: 7vh;
 	font-weight: 900;
@@ -95,7 +95,7 @@ body {
 
 #paletteplus{
 	position: relative; 
-	bottom: 1.5vh;
+	bottom: 2vh;
 }
 
 #sidebutton {
@@ -143,6 +143,19 @@ body {
 	right: 30vw;
 }
 
+#popuphelp {
+	top: 5vh;
+	bottom:5vh;
+	left: 15vw;
+	right: 15vw;
+}
+
+#helptext {
+	font-size: 3vmin;
+	text-align: left;
+	padding: 0 2vw 0 2vw;
+}
+
 #popupsave {
 	top: 5vh;
 	bottom: 5vh;
@@ -160,6 +173,33 @@ body {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-evenly;
+}
+
+#cornerbox {
+	position: fixed;
+	color: black;
+	top: 0;
+	right: 0;
+}
+
+#smallbutton {
+	border: 1px solid black; 
+	box-shadow:0px 0px 0px 1px black inset; 
+	color: black;
+	background-color: white;
+	margin: 1vw 1vw 1vw 1vw;
+	text-align: center; 
+	font-size: 5vh;
+	user-select: none;
+	-webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none;
+}
+
+#shiftup{
+	position: relative; 
+	bottom: .2vh;
 }
 
 .centerme {

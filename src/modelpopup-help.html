@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>block test</title>
+	<title>block test (help popup)</title>
 	<link rel="stylesheet" type="text/css" href="index.css">
 </head>
 <body>
@@ -51,6 +51,23 @@
 	<div id="cornerbox">
 		<div id="smallbutton" class="activebutton"><span id="shiftup">&#10068;</span></div>
 		<div id="smallbutton" class="activebutton"><span id="shiftup">&#128202;</span></div>
+	</div>
+	<div id="bgcover">
+	</div>
+	<div class="popup" id="popuphelp">
+		<strong>Help</strong>
+		<span id="helptext"><br/>
+		This art app is designed to inspire creativity by limiting the available tools.<br/>
+		<strong>split dir</strong> - When you click on a block, it will be split in the middle into two blocks along this direction.<br/>
+		<strong>color block</strong> - When this is toggled on, clicking on a block will set it to the currently chosen color instead of splitting it.<br/>
+		<strong>lines</strong> - When this is toggled on, dark lines visibly seperate the blocks. The lines disappear when toggled off. Will automatically turn on before trying to split or color blocks.<br/>
+		<strong>undo</strong> - Click this button to undo your last split or color operation. There is no redo function, so be sure you want to undo before pressing this button.<br/>
+		<strong>clear</strong> - This button will ask you if you want to clear the canvas. You cannot undo a clear operation.<br/>
+		<strong>save/load</strong> - This button will open the save/load menu. This app will provide a string of text that encodes your picture for you to save wherever you want.<br/>
+		</br></span>
+		<div id="popupbuttonholder">
+			<div class="popupbutton">OK</div>
+		</div>
 	</div>
 </body>
 </html>
